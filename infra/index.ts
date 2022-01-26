@@ -4,19 +4,21 @@ import * as docker from "@pulumi/docker";
 
 const region = digitalocean.Region.SFO3;
 
-const site = new digitalocean.App("my-whole-entire-app", {
+const app = new digitalocean.App("my-whole-entire-app", {
     spec: {
         name: "my-super-sweet-fullstack-app",
         region: region,
-        // staticSites: [{
-        //     name: "frontend",
-        //     git: {
-        //         repoCloneUrl: "https://github.com/cnunciato/cnunciato/mern-on-do-test.git",
-        //         branch: "main",
-        //     },
-        //     buildCommand: "cp -R ./client ./public",
-        //     outputDir: "/public",
-        // }],
+        // staticSites: [
+        //     {
+        //         name: "frontend",
+        //         git: {
+        //             repoCloneUrl: "https://github.com/cnunciato/mern-on-do-test.git",
+        //             branch: "main",
+        //         },
+        //         buildCommand: "cp -R ./client ./public",
+        //         outputDir: "/public",
+        //     }
+        // ],
         services: [
             {
                 name: "api",
@@ -25,14 +27,26 @@ const site = new digitalocean.App("my-whole-entire-app", {
                     branch: "main",
                 },
                 sourceDir: "/api",
+                routes: [
+                    {
+                        path: "/api "
+                    },
+                ],
                 httpPort: 8080,
-            }
+                buildCommand: "npm install",
+                runCommand: "npm start",
+                // cors: {
+                //     allowOrigins
+                // }
+            },
         ],
         // databases: [
 
         // ]
     },
 });
+
+export const { liveUrl } = app;
 
 
 
