@@ -29,7 +29,7 @@ const app = new digitalocean.App("my-whole-entire-app", {
                 sourceDir: "/api",
                 routes: [
                     {
-                        path: "/api "
+                        path: "/api",
                     },
                 ],
                 httpPort: 8080,
