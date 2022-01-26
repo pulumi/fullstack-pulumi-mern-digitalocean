@@ -1,21 +1,36 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as digitalocean from "@pulumi/digitalocean";
+import * as docker from "@pulumi/docker";
 
 const region = digitalocean.Region.SFO3;
 
-const site = new digitalocean.App("site", {
+const site = new digitalocean.App("my-whole-entire-app", {
     spec: {
-        name: "spec-name",
+        name: "my-super-sweet-fullstack-app",
         region: region,
-        staticSites: [{
-            buildCommand: "cp -R ./client ./public",
-            git: {
-                branch: "main",
-                repoCloneUrl: "https://github.com/cnunciato/cnunciato/mern-on-do-test.git",
-            },
-            name: "spec-staticsites-name",
-            outputDir: "/public",
-        }],
+        // staticSites: [{
+        //     name: "frontend",
+        //     git: {
+        //         repoCloneUrl: "https://github.com/cnunciato/cnunciato/mern-on-do-test.git",
+        //         branch: "main",
+        //     },
+        //     buildCommand: "cp -R ./client ./public",
+        //     outputDir: "/public",
+        // }],
+        services: [
+            {
+                name: "api",
+                git: {
+                    repoCloneUrl: "https://github.com/cnunciato/mern-on-do-test.git",
+                    branch: "main",
+                },
+                sourceDir: "/api",
+                httpPort: 8080,
+            }
+        ],
+        // databases: [
+
+        // ]
     },
 });
 
