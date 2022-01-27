@@ -19,11 +19,10 @@ if (process.env.CA_CERT) {
 console.log(process.env);
 
 app.get('/', async (req, res) => {
-    const conn = process.env.DB_CONNECTION_STRING;
-    // const conn = process.env.DATABASE_URL;
+    // const conn = process.env.DB_CONNECTION_STRING;
+    const conn = process.env.DATABASE_URL;
     const client = new mongodb.MongoClient(conn, {
-        // sslCA,
-        ssl: false,
+        sslCA,
     });
 
     await client.connect();
