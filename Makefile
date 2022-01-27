@@ -14,3 +14,11 @@ clean:
 	rm -rf frontend/node_modules
 	rm -rf api/node_modules
 	rm -rf infra/node_modules
+
+.PHONY: destroy
+destroy:
+	pulumi -C infra destroy --yes
+
+.PHONY: deploy
+deploy:
+	pulumi -C infra up --refresh --skip-preview
