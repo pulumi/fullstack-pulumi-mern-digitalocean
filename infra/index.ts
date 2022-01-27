@@ -18,6 +18,8 @@ const db = new digitalocean.DatabaseDb("db", {
     clusterId: cluster.id,
 });
 
+// Maybe I need to attach the DB to the app somehow now? How do I do that?
+
 // https://docs.digitalocean.com/products/app-platform/references/app-specification-reference/
 const app = new digitalocean.App("my-whole-entire-app", {
     spec: {
@@ -52,7 +54,12 @@ const app = new digitalocean.App("my-whole-entire-app", {
                     {
                         key: "CA_CERT",
                         scope: "RUN_AND_BUILD_TIME",
-                        value: "${CA_CERT}"
+                        value: pulumi.interpolate`\${${cluster.name}.CA_CERT}`,
+                    },
+                    {
+                        key: "DATABASE_URL",
+                        scope: "RUN_AND_BUILD_TIME",
+                        value: pulumi.interpolate`\${${cluster.name}.DATABASE_URL}`,
                     }
                 ],
             },
@@ -72,6 +79,12 @@ const app = new digitalocean.App("my-whole-entire-app", {
         ],
     },
 });
+
+// - cluster_name: mongodb-example-19ef379
+//   engine: MONGODB
+//   name: mongodb-example-19ef379
+//   production: true
+//   version: "4"
 
 const trust = new digitalocean.DatabaseFirewall("firewall", {
     clusterId: cluster.id,

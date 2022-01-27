@@ -22,7 +22,8 @@ app.get('/', async (req, res) => {
     const conn = process.env.DB_CONNECTION_STRING;
     // const conn = process.env.DATABASE_URL;
     const client = new mongodb.MongoClient(conn, {
-        sslCA,
+        // sslCA,
+        ssl: false,
     });
 
     await client.connect();
