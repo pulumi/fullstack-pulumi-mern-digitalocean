@@ -42,6 +42,14 @@ const app = new digitalocean.App("my-whole-entire-app", {
                 buildCommand: "npm install",
                 runCommand: "npm start",
                 instanceCount: 1,
+                envs: [
+                    {
+                        key: "DB_CONNECTION_STRING",
+                        scope: "RUN_AND_BUILD_TIME",
+                        value: pulumi.interpolate`mongodb+srv://${cluster.user}:${cluster.password}@${cluster.host}/${cluster.database}`,
+                        type: "SECRET",
+                    },
+                ],
             },
         ],
         staticSites: [
