@@ -68,6 +68,16 @@ const app = new digitalocean.App("my-whole-entire-app", {
     },
 });
 
+const trust = new digitalocean.DatabaseFirewall("firewall", {
+    clusterId: cluster.id,
+    rules: [
+        {
+            type: "app",
+            value: app.id,
+        },
+    ],
+});
+
 export const { host, port, user, password, database } = cluster;
 export const { name } = db;
 export const { liveUrl } = app;
