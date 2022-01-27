@@ -1,4 +1,4 @@
-import './style';
+import "./style";
 
 export default function App() {
 	return (
