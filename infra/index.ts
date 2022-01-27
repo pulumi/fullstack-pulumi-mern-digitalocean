@@ -49,6 +49,11 @@ const app = new digitalocean.App("my-whole-entire-app", {
                         value: pulumi.interpolate`mongodb+srv://${cluster.user}:${cluster.password}@${cluster.host}/${cluster.database}`,
                         type: "SECRET",
                     },
+                    {
+                        key: "CA_CERT",
+                        scope: "RUN_AND_BUILD_TIME",
+                        value: "${CA_CERT}"
+                    }
                 ],
             },
         ],

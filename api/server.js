@@ -3,6 +3,7 @@
 const express = require("express");
 const mongodb = require("mongodb");
 const path = require("path");
+const fs = require("fs");
 
 const PORT = 8080;
 const HOST = '0.0.0.0';
@@ -12,7 +13,7 @@ const app = express();
 let sslCA = path.resolve("./ca-certificate.crt");
 
 if (process.env.CA_CERT) {
-  fs.writeFileSync(sslCA, process.env.CA_CERT);
+    fs.writeFileSync(sslCA, process.env.CA_CERT);
 }
 
 console.log(process.env);
