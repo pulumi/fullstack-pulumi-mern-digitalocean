@@ -1,16 +1,19 @@
-'use strict';
+"use strict";
 
-const express = require('express');
+const express = require("express");
+const mongodb = require("mongodb");
 
-// Constants
 const PORT = 8080;
 const HOST = '0.0.0.0';
 
-// App
 const app = express();
 app.get('/', (req, res) => {
-    res.send('Hello World');
+    res.send("Hello World");
 });
+
+app.get("/test", (req, res) => {
+    res.send(process.env.DB_CONNECTION_STRING);
+})
 
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);
