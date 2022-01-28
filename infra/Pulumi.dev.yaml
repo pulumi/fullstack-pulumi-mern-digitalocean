@@ -1,0 +1,3 @@
+config:
+  pulumi-fullstack-mern-digitalocean:repo: cnunciato/fullstack-pulumi-mern-digitalocean
+  pulumi-fullstack-mern-digitalocean:branch: main
