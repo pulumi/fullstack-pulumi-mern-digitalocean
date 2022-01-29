@@ -2,8 +2,15 @@ import { useState } from 'react'
 import logo from './logo.svg'
 import './App.css'
 
+async function getTasks() {
+    const tasks = await fetch("/api/tasks");
+    console.log({ tasks });
+}
+
 function App() {
-    const [count, setCount] = useState(0)
+    const [count, setCount] = useState(0);
+
+    getTasks().then(tasks => console.log(tasks));
 
     return (
         <div className="App">
