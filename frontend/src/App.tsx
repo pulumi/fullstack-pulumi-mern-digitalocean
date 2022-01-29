@@ -30,7 +30,7 @@ function App() {
                 Hey! You have {tasks.length} things to do.
             </header>
             <ul>
-                { tasks.map((task, i) => <li key={i}>{task.name}</li>)}
+                { tasks.map((task, i) => <li key={i}>{(task as any).name}</li>)}
             </ul>
             <div>
                 <input type="text" onChange={e => setTask(e.target.value)} />
