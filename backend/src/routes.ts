@@ -19,13 +19,13 @@ export const itemsRouter = express.Router();
 // GET items
 
 itemsRouter.get("/", async (req: Request, res: Response) => {
-  try {
-    const items: Item[] = await ItemService.findAll();
+    try {
+        const items = await ItemService.findAll();
 
-    res.status(200).send(items);
-  } catch (e: any) {
-    res.status(500).send(e.message);
-  }
+        res.status(200).send(items);
+    } catch (e: any) {
+        res.status(500).send(e.message);
+    }
 });
 
 // GET items/:id

@@ -3,3 +3,4 @@ node_modules
 .envrc
 
 backend/.env
+backend/bin

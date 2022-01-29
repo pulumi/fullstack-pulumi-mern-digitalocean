@@ -25,4 +25,4 @@ destroy:
 
 .PHONY: deploy
 deploy:
-	pulumi -C infra up --refresh --skip-preview
+	pulumi -C infra up --skip-preview

@@ -18,6 +18,7 @@ const cluster = new digitalocean.DatabaseCluster("cluster", {
 });
 
 const db = new digitalocean.DatabaseDb("db", {
+    name: "my-app",
     clusterId: cluster.id,
 });
 
@@ -35,7 +36,7 @@ const app = new digitalocean.App("app", {
                 },
                 sourceDir: "/frontend",
                 buildCommand: "npm install && npm run build",
-                outputDir: "/build",
+                outputDir: "/dist",
             }
         ],
         services: [
@@ -71,6 +72,14 @@ const app = new digitalocean.App("app", {
                 ],
             },
         ],
+        databases: [
+            {
+                name: "db",
+                clusterName: cluster.name,
+                engine: cluster.engine.apply(engine => engine.toUpperCase()),
+                production: true,
+            }
+        ]
     },
 });
 
@@ -87,35 +96,35 @@ const trustedSource = new digitalocean.DatabaseFirewall("trusted-source", {
 
 // While we wait for https://github.com/digitalocean/terraform-provider-digitalocean/pull/783,
 // we can simply update the spec directly using the DigitalOcean HTTP API.
-pulumi.all([app.id, cluster.name, cluster.engine]).apply(async ([ appID, clusterName, clusterEngine]) => {
+// pulumi.all([app.id, cluster.name, cluster.engine]).apply(async ([ appID, clusterName, clusterEngine]) => {
 
-    const appInfoResult = await fetch(`https://api.digitalocean.com/v2/apps/${appID}`, {
-        method: "GET",
-        headers: {
-            "Authorization": `Bearer ${process.env.DIGITALOCEAN_TOKEN}`,
-        },
-    });
+//     const appInfoResult = await fetch(`https://api.digitalocean.com/v2/apps/${appID}`, {
+//         method: "GET",
+//         headers: {
+//             "Authorization": `Bearer ${process.env.DIGITALOCEAN_TOKEN}`,
+//         },
+//     });
 
-    const appInfo = await appInfoResult.json();
-    const appSpec = await appInfo.app.spec;
+//     const appInfo = await appInfoResult.json();
+//     const appSpec = await appInfo.app.spec;
 
-    appSpec.databases = [
-        {
-            name: "db",
-            clusterName,
-            engine: clusterEngine.toUpperCase(),
-            production: true,
-        }
-    ];
+//     appSpec.databases = [
+//         {
+//             name: "db",
+//             clusterName,
+//             engine: clusterEngine.toUpperCase(),
+//             production: true,
+//         }
+//     ];
 
-    await fetch(`https://api.digitalocean.com/v2/apps/${appID}`, {
-        method: "PUT",
-        body: JSON.stringify({ spec: appSpec }),
-        headers: {
-            "Authorization": `Bearer ${process.env.DIGITALOCEAN_TOKEN}`,
-            "Content-Type": "application/json",
-        },
-    });
-});
+//     await fetch(`https://api.digitalocean.com/v2/apps/${appID}`, {
+//         method: "PUT",
+//         body: JSON.stringify({ spec: appSpec }),
+//         headers: {
+//             "Authorization": `Bearer ${process.env.DIGITALOCEAN_TOKEN}`,
+//             "Content-Type": "application/json",
+//         },
+//     });
+// });
 
 export const { liveUrl } = app;

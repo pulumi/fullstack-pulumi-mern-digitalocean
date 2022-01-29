@@ -20,7 +20,7 @@ const app = express();
  */
 
  app.use(express.json());
- app.use(`${prefix}/items`, itemsRouter);
+ app.use(`${prefix}/tasks`, itemsRouter);
 
 /**
  * Server Activation
