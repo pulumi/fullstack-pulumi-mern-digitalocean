@@ -16,6 +16,7 @@
     },
     "scripts": {
         "dev": "ts-node-dev --respawn --pretty --transpile-only src/index.ts",
-        "build": "tsc"
+        "build": "tsc",
+        "start": "node bin/index"
     }
 }

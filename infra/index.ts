@@ -55,7 +55,7 @@ const app = new digitalocean.App("app", {
                 ],
                 instanceSizeSlug: "basic-xxs",
                 httpPort: 8080,
-                buildCommand: "npm install",
+                buildCommand: "npm install && npm run build",
                 runCommand: "npm start",
                 instanceCount: 1,
                 envs: [
