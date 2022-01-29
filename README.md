@@ -1,7 +1,15 @@
 # fullstack-pulumi-mern-digitalocean
-expo
+
+```
+nvm use
+```
+
 ```
 make ensure
+```
+
+```
+make dev
 ```
 
 ```

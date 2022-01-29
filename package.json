@@ -1,0 +1,11 @@
+{
+    "name": "fullstack-pulumi-mern-digitalocean",
+    "version": "0.0.1",
+    "private": true,
+    "dependencies": {
+        "concurrently": "^7.0.0"
+    },
+    "scripts": {
+        "dev": "concurrently 'npm -C backend run dev' 'npm -C frontend run dev'"
+    }
+}
