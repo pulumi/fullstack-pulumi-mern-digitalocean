@@ -1,28 +1,43 @@
-import { useState } from 'react'
-import logo from './logo.svg'
+import { useState, useEffect } from 'react'
+// import logo from './logo.svg'
 import './App.css'
 
-async function getTasks() {
-    const tasks = await fetch("/api/tasks");
-    console.log({ tasks });
+async function fetchTasks() {
+    const response = await fetch("/api/tasks");
+    const tasks = await response.json();
+    return tasks;
+}
+
+async function addTask(name: string) {
+    const response = await fetch("/api/tasks", {
+        method: "POST",
+        body: JSON.stringify({ name }),
+        headers: { "Content-Type": "application/json" }
+    });
 }
 
 function App() {
-    const [count, setCount] = useState(0);
+    let [ tasks, setTasks ] = useState([]);
+    let [ task, setTask ] = useState("");
 
-    getTasks().then(tasks => console.log(tasks));
+    useEffect(() => {
+        fetchTasks().then(tasks => setTasks(tasks));
+    });
 
     return (
         <div className="App">
-        <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
-            <p>
-                <button type="button" onClick={() => setCount((count) => count + 1)}>
-                    count is: {count}
+            <header className="App-header">
+                Hey! You have {tasks.length} things to do.
+            </header>
+            <ul>
+                { tasks.map((task, i) => <li key={i}>{task.name}</li>)}
+            </ul>
+            <div>
+                <input type="text" onChange={e => setTask(e.target.value)} />
+                <button type="button" onClick={() => addTask(task)}>
+                    Save
                 </button>
-            </p>
-
-        </header>
+            </div>
         </div>
     )
 }
