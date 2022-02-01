@@ -1,8 +1,6 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as digitalocean from "@pulumi/digitalocean";
 
-import fetch from "node-fetch";
-
 const region = digitalocean.Region.SFO3;
 
 const config = new pulumi.Config();
@@ -93,38 +91,5 @@ const trustedSource = new digitalocean.DatabaseFirewall("trusted-source", {
         },
     ],
 });
-
-// While we wait for https://github.com/digitalocean/terraform-provider-digitalocean/pull/783,
-// we can simply update the spec directly using the DigitalOcean HTTP API.
-// pulumi.all([app.id, cluster.name, cluster.engine]).apply(async ([ appID, clusterName, clusterEngine]) => {
-
-//     const appInfoResult = await fetch(`https://api.digitalocean.com/v2/apps/${appID}`, {
-//         method: "GET",
-//         headers: {
-//             "Authorization": `Bearer ${process.env.DIGITALOCEAN_TOKEN}`,
-//         },
-//     });
-
-//     const appInfo = await appInfoResult.json();
-//     const appSpec = await appInfo.app.spec;
-
-//     appSpec.databases = [
-//         {
-//             name: "db",
-//             clusterName,
-//             engine: clusterEngine.toUpperCase(),
-//             production: true,
-//         }
-//     ];
-
-//     await fetch(`https://api.digitalocean.com/v2/apps/${appID}`, {
-//         method: "PUT",
-//         body: JSON.stringify({ spec: appSpec }),
-//         headers: {
-//             "Authorization": `Bearer ${process.env.DIGITALOCEAN_TOKEN}`,
-//             "Content-Type": "application/json",
-//         },
-//     });
-// });
 
 export const { liveUrl } = app;

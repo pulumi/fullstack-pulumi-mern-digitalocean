@@ -1,6 +1,7 @@
 import * as path from "path";
 import * as fs from "fs";
 import * as mongodb from "mongodb";
+import * as bson from "bson";
 
 let sslCA: string | undefined;
 
@@ -17,3 +18,5 @@ if (!conn) {
 export const client = new mongodb.MongoClient(conn, {
     sslCA,
 });
+
+export const findByID = (id: string) => ({ _id: new bson.ObjectID(id) });
