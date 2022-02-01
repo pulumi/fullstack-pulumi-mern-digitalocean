@@ -3,6 +3,9 @@ import { itemsRouter } from "./routes";
 
 const prefix = process.env.BACKEND_ROUTE_PREFIX || "";
 const port = process.env.BACKEND_SERVICE_PORT || 8000;
+
+console.log(process.env);
+
 const app = express();
 
 app.use(express.json());
