@@ -1,11 +1,11 @@
 import express, { Request, Response } from "express";
 export const itemsRouter = express.Router();
 
-import { findAllTasks, addTask, updateTask, deleteTask } from "./task";
+import { getItems, addItem, updateItem, deleteItem } from "./item";
 
 itemsRouter.get("/", async (req: Request, res: Response) => {
     try {
-        const items = await findAllTasks();
+        const items = await getItems();
         res.status(200).send(items);
     } catch (e: any) {
         console.error(e.message);
@@ -15,7 +15,7 @@ itemsRouter.get("/", async (req: Request, res: Response) => {
 
 itemsRouter.post("/", async (req: Request, res: Response) => {
     try {
-        const result = await addTask(req.body.name);
+        const result = await addItem(req.body.name);
         res.status(201).send({ id: result.insertedid});
     } catch (e: any) {
         console.error(e.message);
@@ -25,7 +25,7 @@ itemsRouter.post("/", async (req: Request, res: Response) => {
 
 itemsRouter.put("/:id", async (req: Request, res: Response) => {
     try {
-        await updateTask(req.params.id, req.body.done);
+        await updateItem(req.params.id, req.body.done);
         res.status(201).send();
     } catch (e: any) {
         console.error(e.message);
@@ -35,7 +35,7 @@ itemsRouter.put("/:id", async (req: Request, res: Response) => {
 
 itemsRouter.delete("/:id", async (req: Request, res: Response) => {
     try {
-        await deleteTask(req.params.id, req.body.done);
+        await deleteItem(req.params.id, req.body.done);
         res.status(204).send();
     } catch (e: any) {
         console.error(e.message);

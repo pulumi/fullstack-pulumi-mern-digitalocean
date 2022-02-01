@@ -1,66 +1,93 @@
-import { useState, useEffect, FormEvent } from "react";
+import { useState, useEffect, FormEvent, Component, ChangeEvent } from "react";
 import pulumipus from "./pulumipus.svg";
 import "./App.css";
 
-async function fetchTasks() {
-    const response = await fetch("/api/tasks");
-    const tasks = await response.json();
-    return tasks;
+interface Item {
+    _id: string;
+    name: string;
+    done: boolean;
 }
 
-async function addTask(event: FormEvent, name: string) {
-    event.preventDefault();
+class App extends Component {
 
-    const response = await fetch("/api/tasks", {
-        method: "POST",
-        body: JSON.stringify({ name }),
-        headers: { "Content-Type": "application/json" }
-    });
-}
+    state = {
+        items: [],
+        newItem: "",
+    };
 
-async function toggleTask(task: any) {
-    console.log(`Task is currently ${!!task.done}, sending ${!!!task.done}`);
-    const response = await fetch(`/api/tasks/${task._id}`, {
-        method: "PUT",
-        body: JSON.stringify({ name: task.name, done: !!!task.done }),
-        headers: { "Content-Type": "application/json" }
-    });
-}
+    componentDidMount() {
+        this.fetchItems();
+    }
 
-async function deleteTask(task: any) {
-    const response = await fetch(`/api/tasks/${task._id}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" }
-    });
-}
+    private async fetchItems() {
+        const response = await fetch("/api/items");
+        const items = await response.json();
+        this.setState({ items });
+    }
 
-function App() {
-    let [ tasks, setTasks ] = useState([]);
-    let [ task, setTask ] = useState("");
+    private async addItem(name: string) {
+        await fetch("/api/items", {
+            method: "POST",
+            body: JSON.stringify({ name }),
+            headers: { "Content-Type": "application/json" }
+        });
 
-    useEffect(() => {
-        console.log("I was called");
-        fetchTasks().then(setTasks);
-    }, []);
+        this.setState({ newItem: "" });
+        this.fetchItems();
+    }
 
-    return <div className="App">
-        <header>
-            <img src={pulumipus} className="App-logo" alt="logo" />
-            <h1>Grocery List</h1>
-        </header>
-        <p>There are {tasks.length} things get:</p>
-        <ul>
-            { tasks.map((task, i) => <li key={i}>
-                <span>{(task as any).name}</span>
-                <button onClick={() => toggleTask(task)}>✓</button>
-                <button onClick={() => deleteTask(task)}>&times;</button>
-            </li>)}
-        </ul>
-        <form onSubmit={(event) => addTask(event, task) }>
-            <input type="text" onChange={e => setTask(e.target.value)} placeholder="Add an item" />
-            <button type="submit">+</button>
-        </form>
-    </div>;
+    private async deleteItem(item: Item) {
+        await fetch(`/api/items/${item._id}`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" }
+        });
+
+        this.fetchItems();
+    }
+
+    private async toggleItem(item: Item) {
+         await fetch(`/api/items/${item._id}`, {
+            method: "PUT",
+            body: JSON.stringify({ name: item.name, done: !item.done }),
+            headers: { "Content-Type": "application/json" }
+        });
+
+        this.fetchItems();
+    }
+
+    private onSubmit(event: FormEvent) {
+        event.preventDefault();
+        this.addItem(this.state.newItem);
+    }
+
+    private onChange(event: ChangeEvent) {
+        this.setState({ newItem: (event.target as HTMLInputElement).value })
+    }
+
+    private get items() {
+        return this.state.items;
+    }
+
+    render() {
+        return <div className="App">
+            <header>
+                <img src={pulumipus} className="App-logo" alt="logo" />
+                <h1>Grocery List</h1>
+            </header>
+            { this.items.length > 0 && <p>{this.items.length} thing{this.items.length !== 1 && "s"} to get:</p> }
+            <ul>
+                { this.items.map((item, i) => <li key={i} className={item["done"] ? "done" : ""}>
+                    <span>{(item as any).name}</span>
+                    <button onClick={this.toggleItem.bind(this, item)}>✔︎</button>
+                    <button onClick={this.deleteItem.bind(this, item)}>✖️</button>
+                </li>)}
+            </ul>
+            <form onSubmit={this.onSubmit.bind(this)}>
+                <input type="text" value={this.state.newItem} onChange={this.onChange.bind(this)} placeholder="Add something" />
+                <button type="submit">➕</button>
+            </form>
+        </div>;
+    }
 }
 
 export default App;
