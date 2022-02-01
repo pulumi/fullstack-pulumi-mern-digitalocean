@@ -3,20 +3,19 @@ import * as fs from "fs";
 import * as mongodb from "mongodb";
 import * as bson from "bson";
 
-let sslCA: string | undefined;
-
-if (process.env.CA_CERT) {
-    sslCA = path.resolve("./ca-certificate.crt")
-    fs.writeFileSync(sslCA, process.env.CA_CERT);
-}
-
 const conn = process.env.DATABASE_URL || undefined;
 if (!conn) {
     process.exit(1);
 }
 
+let caCertificatePath: string | undefined;
+if (process.env.CA_CERT) {
+    caCertificatePath = path.resolve("./ca-certificate.crt")
+    fs.writeFileSync(caCertificatePath, process.env.CA_CERT);
+}
+
 export const client = new mongodb.MongoClient(conn, {
-    sslCA,
+    sslCA: caCertificatePath,
 });
 
 export const findByID = (id: string) => ({ _id: new bson.ObjectID(id) });
