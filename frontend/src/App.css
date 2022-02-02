@@ -40,7 +40,7 @@
 }
 
 .App li:not(:first-child) {
-    border-top: 1px solid #ddd;
+    border-top: 1px solid #eee;
 }
 
 .App li span {
@@ -69,6 +69,11 @@ form {
     align-items: center;
 }
 
+form button {
+    background-color: #4d5bd9;
+    color: #fff;
+}
+
 input, button {
     border: 1px solid transparent;
     color: #000000;
@@ -85,16 +90,19 @@ input {
 }
 
 button {
-    background-color: #eee;
+    background-color: #fafafa;
+    color: #222;
+    font-weight: bold;
     padding: 0.5rem 1rem;
     cursor: pointer;
     transition: background-color .2s linear;
 }
 
 button:hover {
-    background-color: #ddd;
+    background-color: #eee;
+    color: #4d5bd9;
 }
 
 button:active {
-    background-color: #ccc;
+    background-color: #ddd;
 }

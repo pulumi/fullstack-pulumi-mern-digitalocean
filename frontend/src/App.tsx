@@ -79,12 +79,12 @@ class App extends Component {
                 { this.items.map((item, i) => <li key={i} className={item["done"] ? "done" : ""}>
                     <span>{(item as any).name}</span>
                     <button onClick={this.toggleItem.bind(this, item)}>✔︎</button>
-                    <button onClick={this.deleteItem.bind(this, item)}>✖️</button>
+                    <button onClick={this.deleteItem.bind(this, item)}>&times;</button>
                 </li>)}
             </ul>
             <form onSubmit={this.onSubmit.bind(this)}>
-                <input type="text" value={this.state.newItem} onChange={this.onChange.bind(this)} placeholder="Add something" size={100} maxLength={100} />
-                <button type="submit">➕</button>
+                <input type="text" value={this.state.newItem} onChange={this.onChange.bind(this)} placeholder="Add an item" size={100} maxLength={100} />
+                <button type="submit">+</button>
             </form>
         </div>;
     }
