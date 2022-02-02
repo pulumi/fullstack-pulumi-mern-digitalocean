@@ -26,12 +26,15 @@ class App extends Component {
     }
 
     private async addItem(name: string) {
+        if (!name.trim()) {
+            return;
+        }
+
         await fetch("/api/items", {
             method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name }),
-            headers: { "Content-Type": "application/json" }
         });
-
         this.setState({ newItem: "" });
         this.fetchItems();
     }
@@ -39,19 +42,16 @@ class App extends Component {
     private async deleteItem(item: Item) {
         await fetch(`/api/items/${item._id}`, {
             method: "DELETE",
-            headers: { "Content-Type": "application/json" }
         });
-
         this.fetchItems();
     }
 
     private async toggleItem(item: Item) {
          await fetch(`/api/items/${item._id}`, {
             method: "PUT",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name: item.name, done: !item.done }),
-            headers: { "Content-Type": "application/json" }
         });
-
         this.fetchItems();
     }
 
@@ -74,7 +74,7 @@ class App extends Component {
                 <img src={pulumipus} className="App-logo" alt="logo" />
                 <h1>Grocery List</h1>
             </header>
-            { this.items.length > 0 && <p>{this.items.length} thing{this.items.length !== 1 && "s"} to get:</p> }
+            { this.items.length > 0 && <p>{this.items.length} item{this.items.length !== 1 && "s"}:</p> }
             <ul>
                 { this.items.map((item, i) => <li key={i} className={item["done"] ? "done" : ""}>
                     <span>{(item as any).name}</span>
@@ -83,7 +83,7 @@ class App extends Component {
                 </li>)}
             </ul>
             <form onSubmit={this.onSubmit.bind(this)}>
-                <input type="text" value={this.state.newItem} onChange={this.onChange.bind(this)} placeholder="Add something" />
+                <input type="text" value={this.state.newItem} onChange={this.onChange.bind(this)} placeholder="Add something" size={100} maxLength={100} />
                 <button type="submit">➕</button>
             </form>
         </div>;
