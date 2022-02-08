@@ -53,6 +53,10 @@
     opacity: 0.4;
 }
 
+.App li.done button:first-of-type {
+    color: #2fc89f;
+}
+
 p {
     color: white;
     margin: .5rem 0;
@@ -91,7 +95,7 @@ input {
 
 button {
     background-color: #fafafa;
-    color: #222;
+    color: #444;
     font-weight: bold;
     padding: 0.5rem 1rem;
     cursor: pointer;

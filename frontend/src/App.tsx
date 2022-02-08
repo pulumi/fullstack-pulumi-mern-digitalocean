@@ -2,6 +2,8 @@ import { useState, useEffect, FormEvent, Component, ChangeEvent } from "react";
 import pulumipus from "./pulumipus.svg";
 import "./App.css";
 
+// Item defines the shape of a grocery-list item, which has a name, unique ID, and a flag
+// indicating whether whether the item has been obtained.
 interface Item {
     _id: string;
     name: string;
@@ -10,42 +12,54 @@ interface Item {
 
 class App extends Component {
 
+    // The local component state: a list of items and a form field for new items.
     state = {
         items: [],
         newItem: "",
     };
 
+    // When the component loads, we call the API that retrieves all items from
+    // the database.
     componentDidMount() {
         this.fetchItems();
     }
 
+    // Retrieve all grocery-list items and write them to local component state.
     private async fetchItems() {
         const response = await fetch("/api/items");
         const items = await response.json();
         this.setState({ items });
     }
 
+    // Add an item to the grocery list, then fetch an updated list.
     private async addItem(name: string) {
+
+        // Ignore empty items.
         if (!name.trim()) {
             return;
         }
 
+        // Make an HTTP POST to the items endpoint.
         await fetch("/api/items", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name }),
         });
+
         this.setState({ newItem: "" });
         this.fetchItems();
     }
 
+    // Delete an item from the grocery list.
     private async deleteItem(item: Item) {
         await fetch(`/api/items/${item._id}`, {
             method: "DELETE",
         });
+
         this.fetchItems();
     }
 
+    // Cross an item off the list (or uncross it).
     private async toggleItem(item: Item) {
          await fetch(`/api/items/${item._id}`, {
             method: "PUT",
@@ -55,19 +69,23 @@ class App extends Component {
         this.fetchItems();
     }
 
+    // Keep track of the item being added.
     private onSubmit(event: FormEvent) {
         event.preventDefault();
         this.addItem(this.state.newItem);
     }
 
+    // Handle form submissions.
     private onChange(event: ChangeEvent) {
         this.setState({ newItem: (event.target as HTMLInputElement).value })
     }
 
+    // Convenience method to make things a bit less repetitive.
     private get items() {
         return this.state.items;
     }
 
+    // Render the list and the new-item form.
     render() {
         return <div className="App">
             <header>

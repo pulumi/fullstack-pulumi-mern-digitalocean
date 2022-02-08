@@ -49,6 +49,7 @@ const app = new digitalocean.App("app", {
                 routes: [
                     {
                         path: "/api",
+                        preservePathPrefix: true,
                     },
                 ],
                 instanceSizeSlug: "basic-xxs",
