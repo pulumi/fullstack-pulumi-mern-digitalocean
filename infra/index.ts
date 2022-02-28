@@ -1,12 +1,16 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as digitalocean from "@pulumi/digitalocean";
 
-const region = digitalocean.Region.SFO3;
-
+// Our stack-specific configuration.
 const config = new pulumi.Config();
 const repo = config.require("repo");
 const branch = config.require("branch");
+const serviceInstanceCount = config.requireNumber("service_instance_count")
 
+// The DigitalOcean region to deploy into.
+const region = digitalocean.Region.SFO3;
+
+// Our MongoDB cluster (currently just one node).
 const cluster = new digitalocean.DatabaseCluster("cluster", {
     engine: "mongodb",
     version: "4",
@@ -15,15 +19,19 @@ const cluster = new digitalocean.DatabaseCluster("cluster", {
     nodeCount: 1,
 });
 
+// The database we'll use for our grocery list.
 const db = new digitalocean.DatabaseDb("db", {
-    name: "my-app",
+    name: "grocery-list",
     clusterId: cluster.id,
 });
 
+// The App Platform spec that defines our grocery list.
 const app = new digitalocean.App("app", {
     spec: {
-        name: "my-app",
+        name: "grocery-list",
         region: region,
+
+        // The React front end.
         staticSites: [
             {
                 name: "frontend",
@@ -37,6 +45,8 @@ const app = new digitalocean.App("app", {
                 outputDir: "/dist",
             }
         ],
+
+        // The Express back end.
         services: [
             {
                 name: "backend",
@@ -46,6 +56,9 @@ const app = new digitalocean.App("app", {
                     deployOnPush: true,
                 },
                 sourceDir: "/backend",
+                buildCommand: "npm install && npm run build",
+                runCommand: "npm start",
+                httpPort: 8000,
                 routes: [
                     {
                         path: "/api",
@@ -53,36 +66,49 @@ const app = new digitalocean.App("app", {
                     },
                 ],
                 instanceSizeSlug: "basic-xxs",
-                httpPort: 8000,
-                buildCommand: "npm install && npm run build",
-                runCommand: "npm start",
                 instanceCount: 1,
+
+                // To connect to MongoDB, the service needs a DATABASE_URL, which
+                // is conveniently exposed as an environment variable because the
+                // database belongs to the app (see below). The CA_CERT allows for
+                // a secure connection between API service and database.
                 envs: [
+                    {
+                        key: "DATABASE_URL",
+                        scope: "RUN_AND_BUILD_TIME",
+                        value: "${db.DATABASE_URL}",
+                    },
                     {
                         key: "CA_CERT",
                         scope: "RUN_AND_BUILD_TIME",
                         value: "${db.CA_CERT}",
                     },
-                    {
-                        key: "DATABASE_URL",
-                        scope: "RUN_AND_BUILD_TIME",
-                        value: "${db.DATABASE_URL}",
-                    }
                 ],
             },
         ],
+
+        // Include the MongoDB cluster as an integrated App Platform component.
         databases: [
             {
+                // The `db` name defines the prefix of the tokens used (above) to
+                // read the environment variables exposed by the database cluster.
                 name: "db",
-                clusterName: cluster.name,
-                engine: cluster.engine.apply(engine => engine.toUpperCase()),
+
+                // MongoDB clusters are only available in "production" mode.
+                // https://docs.digitalocean.com/products/app-platform/concepts/database/
                 production: true,
+
+                // A reference to the managed cluster we declared above.
+                clusterName: cluster.name,
+
+                // The engine value must be uppercase, so we transform it with JS.
+                engine: cluster.engine.apply(engine => engine.toUpperCase()),
             }
         ]
     },
 });
 
-// Add the app as a trusted source.
+// Adding a database firewall setting restricts access solely to our app.
 const trustedSource = new digitalocean.DatabaseFirewall("trusted-source", {
     clusterId: cluster.id,
     rules: [
@@ -93,4 +119,5 @@ const trustedSource = new digitalocean.DatabaseFirewall("trusted-source", {
     ],
 });
 
+// The DigitalOcean-assigned URL for our app.
 export const { liveUrl } = app;

@@ -1,3 +1,3 @@
-name: pulumi-fullstack-mern-digitalocean
+name: grocery-list
 runtime: nodejs
-description: A full-stack web application using React, Express, and MongoDB deployed on DigitalOcean.
+description: Deploying a MERN-stack app on DigitalOcean
