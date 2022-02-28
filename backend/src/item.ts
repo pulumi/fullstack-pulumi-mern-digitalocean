@@ -6,7 +6,7 @@ export interface Item {
     done: boolean;
 }
 
-const dbName = "my-app";
+const dbName = "grocery-list";
 const collectionName = "items";
 
 export const getItems = async (): Promise<any[]> => {
