@@ -1,3 +1,0 @@
-name: pulumi-fullstack-mern-digitalocean
-runtime: nodejs
-description: A full-stack web application using React, Express, and MongoDB deployed on DigitalOcean.
