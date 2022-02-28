@@ -2,8 +2,8 @@ import { useState, useEffect, FormEvent, Component, ChangeEvent } from "react";
 import pulumipus from "./pulumipus.svg";
 import "./App.css";
 
-// Item defines the shape of a grocery-list item, which has a name, unique ID, and a flag
-// indicating whether whether the item has been obtained.
+// Item defines the shape of a grocery-list item, which has a name, unique ID, and
+// a flag to indicate whether the item has been obtained.
 interface Item {
     _id: string;
     name: string;
