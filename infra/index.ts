@@ -5,7 +5,6 @@ import * as digitalocean from "@pulumi/digitalocean";
 const config = new pulumi.Config();
 const repo = config.require("repo");
 const branch = config.require("branch");
-const serviceInstanceCount = config.requireNumber("service_instance_count")
 
 // The DigitalOcean region to deploy into.
 const region = digitalocean.Region.SFO3;
@@ -66,11 +65,11 @@ const app = new digitalocean.App("app", {
                     },
                 ],
                 instanceSizeSlug: "basic-xxs",
-                instanceCount: serviceInstanceCount,
+                instanceCount: 1,
 
                 // To connect to MongoDB, the service needs a DATABASE_URL, which
-                // is conveniently exposed as an environment variable because the
-                // database belongs to the app (see below).
+                // is conveniently exposed as an environment variable thanks to its
+                // membership in this app spec (below).
                 envs: [
                     {
                         key: "DATABASE_URL",
@@ -84,15 +83,15 @@ const app = new digitalocean.App("app", {
         // Include the MongoDB cluster as an integrated App Platform component.
         databases: [
             {
-                // The `db` name defines the prefix of the tokens used (above) to
+                // The name `db` defines the prefix of the tokens used (above) to
                 // read the environment variables exposed by the database cluster.
                 name: "db",
 
                 // MongoDB clusters are only available in "production" mode.
-                // https://docs.digitalocean.com/products/app-platform/concepts/database/
+                // https://docs.digitalocean.com/products/app-platform/how-to/manage-databases/
                 production: true,
 
-                // A reference to the managed cluster we declared above.
+                // A reference to the `DatabaseCluster` we declared above.
                 clusterName: cluster.name,
 
                 // The engine value must be uppercase, so we transform it with JS.
@@ -102,7 +101,7 @@ const app = new digitalocean.App("app", {
     },
 });
 
-// Adding a database firewall setting restricts access solely to our app.
+// Adding a database firewall setting grants access solely to our app.
 const trustedSource = new digitalocean.DatabaseFirewall("trusted-source", {
     clusterId: cluster.id,
     rules: [
