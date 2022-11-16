@@ -13,7 +13,7 @@ const region = digitalocean.Region.SFO3;
 // Our MongoDB cluster (currently just one node).
 const cluster = new digitalocean.DatabaseCluster("cluster", {
     engine: "mongodb",
-    version: "4",
+    version: "5",
     region,
     size: digitalocean.DatabaseSlug.DB_1VPCU1GB,
     nodeCount: 1,
@@ -66,22 +66,16 @@ const app = new digitalocean.App("app", {
                     },
                 ],
                 instanceSizeSlug: "basic-xxs",
-                instanceCount: 1,
+                instanceCount: serviceInstanceCount,
 
                 // To connect to MongoDB, the service needs a DATABASE_URL, which
                 // is conveniently exposed as an environment variable because the
-                // database belongs to the app (see below). The CA_CERT allows for
-                // a secure connection between API service and database.
+                // database belongs to the app (see below).
                 envs: [
                     {
                         key: "DATABASE_URL",
                         scope: "RUN_AND_BUILD_TIME",
                         value: "${db.DATABASE_URL}",
-                    },
-                    {
-                        key: "CA_CERT",
-                        scope: "RUN_AND_BUILD_TIME",
-                        value: "${db.CA_CERT}",
                     },
                 ],
             },
