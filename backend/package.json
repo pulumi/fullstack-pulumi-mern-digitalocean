@@ -5,7 +5,7 @@
     "dependencies": {
         "dotenv": "^14.3.2",
         "express": "^4.17.2",
-        "mongodb": "^4.3.1"
+        "mongodb": "^4.17.0"
     },
     "devDependencies": {
         "@types/dotenv": "^8.2.0",
